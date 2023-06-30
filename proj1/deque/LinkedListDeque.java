@@ -19,7 +19,7 @@ public class LinkedListDeque<Item> {
     */
     private DequeNode<Item> sentinel;
 
-    /** Create an empty List. */
+    /** Create an empty deque. */
     public LinkedListDeque() {
         sentinel = new DequeNode<>(null, null, null);
         sentinel.previous = sentinel.next = sentinel;
@@ -99,7 +99,7 @@ public class LinkedListDeque<Item> {
     /** Return null or d.item if d equals to null or index equals to 0,
      *  otherwise recursively call the getRecHelper with
      *  d.next and index - 1. */
-     public Item getRecHelper(DequeNode<Item> d, int index) {
+     private Item getRecHelper(DequeNode<Item> d, int index) {
          if (d == null) {
              return null;
          } else if (index == 0) {
