@@ -108,8 +108,8 @@ public class ArrayDequeTest {
     public void emptyNullReturnTest() {
         ArrayDeque<Integer> ad1 = new ArrayDeque<Integer>();
 
-        assertEquals("Should return null when removeFirst is called on an empty Deque,", null, lld1.removeFirst());
-        assertEquals("Should return null when removeLast is called on an empty Deque,", null, lld1.removeLast());
+        assertEquals("Should return null when removeFirst is called on an empty Deque,", null, ad1.removeFirst());
+        assertEquals("Should return null when removeLast is called on an empty Deque,", null, ad1.removeLast());
     }
 
     @Test
