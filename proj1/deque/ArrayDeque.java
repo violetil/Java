@@ -3,11 +3,12 @@ package deque;
 import java.lang.reflect.Array;
 
 public class ArrayDeque<Item> {
-    private Item[] items = (Item[]) new Object();
+    private Item[] items;
     private int size;
 
     /** Create an empty array deque. */
     public ArrayDeque() {
+        items = (Item[]) new Object[8];
         size = 0;
     }
 
@@ -18,32 +19,11 @@ public class ArrayDeque<Item> {
         size = 1;
     }
 
-    /** Resizing the array items with the specified capacity,
-     *  copy the length of items start at the source location and the length
-     *  into destination array start at the specified location. */
-    private void resizing(int srcPos, int destPos, int length, int capacity) {
-        Item[] newItems = (Item[]) new Object[capacity];
-        System.arraycopy(items, srcPos, newItems, destPos, length);
-        items = newItems;
-    }
-
-    /** Resizing array items with the specified capacity,
-     *  and copy the whole items into destination array start at 1 location. */
-    private void resizeAddFirst(int capacity) {
-        resizing(0, 1, items.length, capacity);
-    }
-
-    /** Resizing array items with the capacity,
-     *  and copy the whole items into destination array start at 0 location. */
-    private void resizeAddLast(int capacity) {
-        resizing(0, 0, items.length, capacity);
-    }
-
     /** Add the item into the front of array deque,
      *  resizing if out the length of items. */
     public void addFirst(Item item) {
-        if (this.size == this.items.length) {
-            resizeAddFirst(items.length * 2);
+        if (size == items.length) {
+            resizeAddFirst(size * 2); // Faster than size+1
         } else {
             resizeAddFirst(items.length);
         }
@@ -55,35 +35,28 @@ public class ArrayDeque<Item> {
      *  resizing if out the length of items. */
     public void addLast(Item item) {
         if (this.size == this.items.length) {
-            resizeAddLast(items.length * 2);
+            resizeAddLast(size * 2); // Faster than size+1
         }
         items[size] = item;
         size += 1;
     }
 
-    /** Resizing the items with specified capacity,
-     *  copy the size - 1 of items start at the 1 location
-     *  into the destination array at the 0 location. */
-    private void resizeRemoveFirst(int capacity) {
-        resizing(1, 0, size - 1, capacity);
-    }
-
-    /** Resizing the items with specified capacity,
-     *  copy the size - 1 of items start at the 0 location
-     *  into the destination array at the 0 location. */
-    private void resizeRemoveLast(int capacity) {
-        resizing(0, 0, size - 1, capacity);
-    }
-
     /** Removes and returns the front item in the array deque,
      *  if no such item exists, returns null.
-     *  Resizing the length of items when the length bigger than 8. */
+     *  Resizing items when the use factor less than 25%.
+     *  Use factor: size / items.length. */
     public Item removeFirst() {
+        if (isEmpty()) {
+            return null;
+        }
+
         Item tmp = items[0];
-        if (size > 16) {
-            resizeRemoveFirst(size - 1);
-        } else {
+        if (size < 16) {
+            resizeRemoveFirst(16);
+        } else if ((double) size / items.length < 0.25) {
             resizeRemoveFirst(size);
+        } else {
+            resizeRemoveFirst(items.length);
         }
         size -= 1;
         return tmp;
@@ -91,13 +64,20 @@ public class ArrayDeque<Item> {
 
     /** Removes and returns the back item in the array deque,
      *  if no such item exists, returns null.
-     *  Resizing the length of items when the length less than 8. */
+     *  Resizing items when the use factor less than 25%.
+     *  Use factor: size / items.length. */
     public Item removeLast() {
-        Item tmp = items[0];
-        if (size > 16) {
-            resizeRemoveLast(size - 1);
-        } else {
+        if (isEmpty()) {
+            return null;
+        }
+
+        Item tmp = items[size - 1];
+        if (size < 16) {
+            resizeRemoveLast(16);
+        } else if ((double) size / items.length < 0.25) {
             resizeRemoveLast(size);
+        } else {
+            resizeRemoveLast(items.length);
         }
         size -= 1;
         return tmp;
@@ -129,5 +109,42 @@ public class ArrayDeque<Item> {
             System.out.print(items[i] + " ");
         }
         System.out.println();
+    }
+
+
+    /**                             ArrayDeque Class Helper Method.                             */
+
+
+    /** Resizing the array items with the new capacity,
+     *  and copy the length of items start at the source position
+     *  into the new items start at the target position. */
+    private void resizing(int srcPos, int destPos, int length, int capacity) {
+        Item[] newItems = (Item[]) new Object[capacity];
+        System.arraycopy(items, srcPos, newItems, destPos, length);
+        items = newItems;
+    }
+
+    /** Resizing array items with the new capacity,
+     *  and move all items back one position. */
+    private void resizeAddFirst(int capacity) {
+        resizing(0, 1, size, capacity);
+    }
+
+    /** Resizing array items with the new capacity,
+     *  and copy all items into new items. */
+    private void resizeAddLast(int capacity) {
+        resizing(0, 0, size, capacity);
+    }
+
+    /** Resizing the items with new capacity,
+     *  move all items forward except the first. */
+    private void resizeRemoveFirst(int capacity) {
+        resizing(1, 0, size - 1, capacity);
+    }
+
+    /** Resizing the items with new capacity,
+     *  move all items forward expect the last. */
+    private void resizeRemoveLast(int capacity) {
+        resizing(0, 0, size - 1, capacity);
     }
 }
