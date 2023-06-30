@@ -8,7 +8,6 @@ public class ArrayDeque<Item> {
 
     /** Create an empty array deque. */
     public ArrayDeque() {
-        items = (Item[]) new Object[8];
         size = 0;
     }
 
@@ -22,23 +21,23 @@ public class ArrayDeque<Item> {
     /** Resizing the array items with the specified capacity,
      *  copy the length of items start at the source location and the length
      *  into destination array start at the specified location. */
-     private void resizing(int srcPos, int destPos, int length, int capacity) {
-         Item[] newItems = (Item[]) new Object[capacity];
-         System.arraycopy(items, srcPos, newItems, destPos, length);
-         items = newItems;
-     }
+    private void resizing(int srcPos, int destPos, int length, int capacity) {
+        Item[] newItems = (Item[]) new Object[capacity];
+        System.arraycopy(items, srcPos, newItems, destPos, length);
+        items = newItems;
+    }
 
     /** Resizing array items with the specified capacity,
      *  and copy the whole items into destination array start at 1 location. */
-     private void resizeAddFirst(int capacity) {
+    private void resizeAddFirst(int capacity) {
         resizing(0, 1, items.length, capacity);
-     }
+    }
 
     /** Resizing array items with the capacity,
      *  and copy the whole items into destination array start at 0 location. */
-     private void resizeAddLast(int capacity) {
-         resizing(0, 0, items.length, capacity);
-     }
+    private void resizeAddLast(int capacity) {
+        resizing(0, 0, items.length, capacity);
+    }
 
     /** Add the item into the front of array deque,
      *  resizing if out the length of items. */
@@ -65,23 +64,23 @@ public class ArrayDeque<Item> {
     /** Resizing the items with specified capacity,
      *  copy the size - 1 of items start at the 1 location
      *  into the destination array at the 0 location. */
-     private void resizeRemoveFirst(int capacity) {
-         resizing(1, 0, size - 1, capacity);
-     }
+    private void resizeRemoveFirst(int capacity) {
+        resizing(1, 0, size - 1, capacity);
+    }
 
     /** Resizing the items with specified capacity,
      *  copy the size - 1 of items start at the 0 location
      *  into the destination array at the 0 location. */
-     private void resizeRemoveLast(int capacity) {
-         resizing(0, 0, size - 1, capacity);
-     }
+    private void resizeRemoveLast(int capacity) {
+        resizing(0, 0, size - 1, capacity);
+    }
 
     /** Removes and returns the front item in the array deque,
      *  if no such item exists, returns null.
      *  Resizing the length of items when the length bigger than 8. */
     public Item removeFirst() {
         Item tmp = items[0];
-        if (size > 8) {
+        if (size > 16) {
             resizeRemoveFirst(size - 1);
         } else {
             resizeRemoveFirst(size);
@@ -95,7 +94,7 @@ public class ArrayDeque<Item> {
      *  Resizing the length of items when the length less than 8. */
     public Item removeLast() {
         Item tmp = items[0];
-        if (size > 8) {
+        if (size > 16) {
             resizeRemoveLast(size - 1);
         } else {
             resizeRemoveLast(size);
