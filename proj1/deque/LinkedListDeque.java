@@ -90,7 +90,7 @@ public class LinkedListDeque<Item> {
 
         /*  Let d continue to advance until the item is found
             (i == index), or doesn't fond until the end of Deque. */
-        for (int i = 0; d != sentinel && i <= index; i += 1) {
+        for (int i = 0; d != sentinel && i < index; i += 1) {
             d = d.next;
         }
         return d.item;
