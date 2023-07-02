@@ -1,5 +1,6 @@
-package deque;
+package test;
 
+import deque.ArrayDeque;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -126,6 +127,19 @@ public class ArrayDequeTest {
 
         for (Integer i = 99999; i > 50000; i--) {
             assertEquals("Should have the same value", i, ad1.removeLast());
+        }
+    }
+
+    @Test
+    /** Add small number of elements and test the get method. */
+    public void getTest() {
+        ArrayDeque<Integer> ad1 = new ArrayDeque<>();
+        for (int i = 0; i < 100; i++) {
+            ad1.addLast(i);
+        }
+
+        for (Integer i = 0; i < 100; i++) {
+            assertEquals("Should get the same value.", i, ad1.get(i));
         }
     }
 }

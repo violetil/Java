@@ -1,9 +1,10 @@
-package deque;
+package test;
 
+import deque.LinkedListDeque;
 import edu.princeton.cs.algs4.Stopwatch;
 
-public class timingADequeTest {
-    private static void printTimingTable(ArrayDeque<Integer> Ns, ArrayDeque<Double> times, ArrayDeque<Integer> opCounts) {
+public class timingLLDequeTest {
+    private static void printTimingTable(LinkedListDeque<Integer> Ns, LinkedListDeque<Double> times, LinkedListDeque<Integer> opCounts) {
         System.out.printf("%12s %12s %12s %12s\n", "N", "times(s)", "#ops", "microSec/op");
         System.out.printf("-------------------------------------------------------------\n");
         for (int i = 0; i < Ns.size(); i += 1) {
@@ -15,17 +16,20 @@ public class timingADequeTest {
         }
     }
 
-    private static void timeADequeConstruction() {
-        ArrayDeque<Integer> Ns = new ArrayDeque<>(); // Size of deque.
-        ArrayDeque<Double> times = new ArrayDeque<>();
-        ArrayDeque<Integer> opCounts = new ArrayDeque<>();
+    private static void timeLLDequeConstruction() {
+        LinkedListDeque<Integer> Ns = new LinkedListDeque<>(); // Size of deque.
+        LinkedListDeque<Double> times = new LinkedListDeque<>();
+        LinkedListDeque<Integer> opCounts = new LinkedListDeque<>();
 
         for (int i = 1000; i <= 128000; i *= 2) {
-            ArrayDeque<Integer> ad1 = new ArrayDeque<>();
+            LinkedListDeque<Integer> lld1 = new LinkedListDeque<>();
             int N = i; double time; int opCount = i;
+            for (int j = 0; j < i; j += 1) {
+                lld1.addFirst(j);
+            }
             Stopwatch sw = new Stopwatch();
             for (int j = 0; j < i; j += 1) {
-                ad1.addFirst(j);
+                lld1.removeFirst();
             }
             time = sw.elapsedTime();
             Ns.addLast(N); times.addLast(time); opCounts.addLast(opCount);
@@ -34,6 +38,6 @@ public class timingADequeTest {
     }
 
     public static void main(String[] args) {
-        timeADequeConstruction();
+        timeLLDequeConstruction();
     }
 }
