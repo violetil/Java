@@ -1,41 +1,61 @@
 package deque;
 
-import org.antlr.v4.runtime.misc.ObjectEqualityComparator;
-
-import java.lang.reflect.Array;
-
 public class ArrayDeque<Item> {
     private Item[] items;
-    private int nextFirst; // Always front in the first item.
-    private int nextLast; // Always back in the last item.
+    private int first;
+    private int last;
     private int size;
 
     /** Create an empty array deque. */
     public ArrayDeque() {
         items = (Item[]) new Object[8];
-        nextFirst = items.length / 2;
-        nextLast = (nextFirst + 1) % items.length;
+        first = 0; last = items.length - 1;
         size = 0;
     }
 
     /** Create an array deque with an item. */
     public ArrayDeque(Item item) {
         items = (Item[]) new Object[8];
-        nextFirst = items.length / 2;
-        nextLast = (nextFirst + 1) % items.length;
+        first = 0; last = items.length - 1;
         size = 0;
 
         addFirst(item);
+    }
+
+    /** Return the point forward one bit. */
+    private int forwardPoint(int point) {
+        return (point + 1) % items.length;
+    }
+
+    /** Return the point back one bit. */
+    private int backPoint(int point) {
+        return (point - 1 + items.length) % items.length;
+    }
+
+    /** Resize items with new capacity,
+     *  and copy all elements into new items.
+     */
+    private void resize(int capacity) {
+        Item[] nItems = (Item[]) new Object[capacity];
+        int oldIndex = first; int newIndex = first % nItems.length;
+        first = newIndex;
+        for (int i = 0; i < size; i++) {
+            nItems[newIndex] = items[oldIndex];
+            oldIndex = (oldIndex + 1) % items.length;
+            newIndex = (newIndex + 1) % nItems.length;
+        }
+        items = nItems;
+        last = backPoint(newIndex);
     }
 
     /** Add the item into the front of array deque,
      *  resizing if out the length of items. */
     public void addFirst(Item item) {
         if (size == items.length) {
-            resizing(size * 2);
+            resize(size * 2);
         }
-        items[nextFirst] = item;
-        expandNextFirst();
+        first = backPoint(first);
+        items[first] = item;
         size += 1;
     }
 
@@ -43,10 +63,10 @@ public class ArrayDeque<Item> {
      *  resizing if out the length of items. */
     public void addLast(Item item) {
         if (size == items.length) {
-            resizing(size * 2);
+            resize(size * 2);
         }
-        items[nextLast] = item;
-        expandNextLast();
+        last = forwardPoint(last);
+        items[last] = item;
         size += 1;
     }
 
@@ -59,13 +79,13 @@ public class ArrayDeque<Item> {
             return null;
         }
 
-        Item tmp = items[(nextFirst + 1) % items.length];
-        items[(nextFirst + 1) % items.length] = null;
-        shrinkNextFirst();
+        Item tmp = items[first];
+        items[first] = null;
+        first = forwardPoint(first);
         size -= 1;
 
         if (size > 16 && (double) size / items.length < 0.25) {
-            resizing(size);
+            resize(size);
         }
         return tmp;
     }
@@ -79,13 +99,13 @@ public class ArrayDeque<Item> {
             return null;
         }
 
-        Item tmp = items[(nextLast - 1 + items.length) % items.length];
-        items[(nextLast - 1 + items.length) % items.length] = null;
-        shrinkNextLast();
+        Item tmp = items[last];
+        items[last] = null;
+        last = backPoint(last);
         size -= 1;
 
         if (size > 16 && (double) size / items.length < 0.25) {
-            resizing(size);
+            resize(size);
         }
         return tmp;
     }
@@ -106,78 +126,22 @@ public class ArrayDeque<Item> {
         if (index >= items.length || index < 0) {
             return null;
         }
-        int realIndex = (index + nextFirst + 1) % items.length;
+        int realIndex = (index + first) % items.length;
         return items[realIndex];
     }
 
     /** Prints the items in the deque from first to last, separated by space.
      *  Once all items have been printed, prints out a new line. */
     public void printDeque() {
-        int index = (nextFirst + 1) % items.length;
-        while (index != nextLast) {
+        if (isEmpty()) {
+            return;
+        }
+
+        int index = first;
+        for (int i = 0; i < size; i++) {
             System.out.print(items[index] + " ");
-            index = (index + 1) % items.length;
+            index = forwardPoint(index);
         }
         System.out.println();
-    }
-
-
-    /**                             ArrayDeque Class Helper Method.                             */
-
-
-    private void resizing(int capacity) {
-        Item[] nItems = (Item[]) new Object[capacity];
-
-        // Copy elements from the old array to the new array
-        int oldIndex = (nextFirst + 1) % items.length;
-        for (int newIndex = 0; newIndex < size; newIndex++) {
-            nItems[newIndex] = items[oldIndex];
-            oldIndex = (oldIndex + 1) % items.length;
-        }
-
-        items = nItems;
-        nextFirst = capacity - 1; // Update nextFirst to the last index of the new array
-        nextLast = size; // Update nextLast to the next available index in the new array
-    }
-
-
-    /** Move nextFirst back one bit and
-     *  set it to the end of array if it is less than zero.
-     */
-    private void expandNextFirst() {
-        nextFirst -= 1;
-        if (nextFirst < 0) {
-            nextFirst = items.length - 1;
-        }
-    }
-
-    /** Move nextFirst forward one bit,
-     *  if it exceeds the array length, start from zero.
-     */
-    private void shrinkNextFirst() {
-        nextFirst += 1;
-        if (nextFirst == items.length) {
-            nextFirst = 0;
-        }
-    }
-
-    /** Move nextLast forward one bit,
-     *  if it exceeds the array length, start from zero.
-     */
-    private void expandNextLast() {
-        nextLast += 1;
-        if (nextLast == items.length) {
-            nextLast = 0;
-        }
-    }
-
-    /** Move nextLast back one bit,
-     *  set it to the end of array if it is less than zero.
-     */
-    private void shrinkNextLast() {
-        nextLast -= 1;
-        if (nextLast < 0) {
-            nextLast = items.length - 1;
-        }
     }
 }
