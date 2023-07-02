@@ -1,6 +1,6 @@
 package deque;
 
-public class ArrayDeque<Item> {
+public class ArrayDeque<Item> implements Deque<Item> {
     private Item[] items;
     private int first;
     private int last;
@@ -50,6 +50,7 @@ public class ArrayDeque<Item> {
 
     /** Add the item into the front of array deque,
      *  resizing if out the length of items. */
+    @Override
     public void addFirst(Item item) {
         if (size == items.length) {
             resize(size * 2);
@@ -61,6 +62,7 @@ public class ArrayDeque<Item> {
 
     /** Add the item into the back of array deque,
      *  resizing if out the length of items. */
+    @Override
     public void addLast(Item item) {
         if (size == items.length) {
             resize(size * 2);
@@ -74,6 +76,7 @@ public class ArrayDeque<Item> {
      *  if no such item exists, returns null.
      *  Resizing items when the use factor less than 25%.
      *  Use factor: size / items.length. */
+    @Override
     public Item removeFirst() {
         if (isEmpty()) {
             return null;
@@ -94,6 +97,7 @@ public class ArrayDeque<Item> {
      *  if no such item exists, returns null.
      *  Resizing items when the use factor less than 25%.
      *  Use factor: size / items.length. */
+    @Override
     public Item removeLast() {
         if (isEmpty()) {
             return null;
@@ -111,17 +115,20 @@ public class ArrayDeque<Item> {
     }
 
     /** Return true if the array deque is empty, otherwise false. */
+    @Override
     public boolean isEmpty() {
         return this.size == 0;
     }
 
     /** Returns the number of items in the array deque. */
+    @Override
     public int size() {
         return this.size;
     }
 
     /** Get the item at the given index, where 0 is front,
      *  1 is the next item, and so forth. If no such item exists, returns null. */
+    @Override
     public Item get(int index) {
         if (index >= items.length || index < 0) {
             return null;
@@ -132,6 +139,7 @@ public class ArrayDeque<Item> {
 
     /** Prints the items in the deque from first to last, separated by space.
      *  Once all items have been printed, prints out a new line. */
+    @Override
     public void printDeque() {
         if (isEmpty()) {
             return;

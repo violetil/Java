@@ -1,6 +1,6 @@
 package deque;
 
-public class LinkedListDeque<Item> {
+public class LinkedListDeque<Item> implements Deque<Item> {
     private static class DequeNode<Item> {
         Item item;
         DequeNode<Item> previous;
@@ -34,6 +34,7 @@ public class LinkedListDeque<Item> {
     }
 
     /** Add the item into the front of Deque. */
+    @Override
     public void addFirst(Item item) {
         sentinel.next = new DequeNode<>(item, sentinel, sentinel.next);
         sentinel.next.next.previous = sentinel.next;
@@ -41,6 +42,7 @@ public class LinkedListDeque<Item> {
     }
 
     /** Add the item into the back of Deque. */
+    @Override
     public void addLast(Item item) {
         sentinel.previous = new DequeNode<>(item, sentinel.previous, sentinel);
         sentinel.previous.previous.next = sentinel.previous;
@@ -48,17 +50,20 @@ public class LinkedListDeque<Item> {
     }
 
     /** Return true if Deque is empty, false otherwise. */
+    @Override
     public boolean isEmpty() {
         return size == 0;
     }
 
     /** Return the number of items in the deque. */
+    @Override
     public int size() {
         return this.size;
     }
 
     /** Removes and returns the item at the front of the Deque,
      *  if no such item exists, returns null. */
+    @Override
     public Item removeFirst() {
         if (this.isEmpty()) {
             return null;
@@ -72,6 +77,7 @@ public class LinkedListDeque<Item> {
 
     /** Removes and returns the item at the back of the Deque,
      *  if no such item exists, returns null. */
+    @Override
      public Item removeLast() {
          if (this.isEmpty()) {
              return null;
@@ -85,6 +91,7 @@ public class LinkedListDeque<Item> {
 
     /** Get the item at the given index, where 0 is front,
      *  1 is the next item, and so forth. If no such item exists, returns null. */
+    @Override
      public Item get(int index) {
         DequeNode<Item> d = sentinel.next;
 
@@ -120,6 +127,7 @@ public class LinkedListDeque<Item> {
 
     /** Prints the items in the Deque from first to last, separated by a space.
      *  Once all the items have been printed, print out a new line. */
+    @Override
     public void printDeque() {
         DequeNode<Item> d = sentinel.next;
 

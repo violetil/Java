@@ -21,7 +21,7 @@ public class timingLLDequeTest {
         LinkedListDeque<Double> times = new LinkedListDeque<>();
         LinkedListDeque<Integer> opCounts = new LinkedListDeque<>();
 
-        for (int i = 1000; i <= 128000; i *= 2) {
+        for (int i = 1000; i <= 512000; i *= 2) {
             LinkedListDeque<Integer> lld1 = new LinkedListDeque<>();
             int N = i; double time; int opCount = i;
             for (int j = 0; j < i; j += 1) {
@@ -29,7 +29,7 @@ public class timingLLDequeTest {
             }
             Stopwatch sw = new Stopwatch();
             for (int j = 0; j < i; j += 1) {
-                lld1.removeFirst();
+                lld1.get(j);
             }
             time = sw.elapsedTime();
             Ns.addLast(N); times.addLast(time); opCounts.addLast(opCount);
