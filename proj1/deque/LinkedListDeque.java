@@ -1,5 +1,7 @@
 package deque;
 
+import java.util.Objects;
+
 public class LinkedListDeque<Item> implements Deque<Item> {
     private static class DequeNode<Item> {
         Item item;
@@ -31,6 +33,36 @@ public class LinkedListDeque<Item> implements Deque<Item> {
         sentinel = new DequeNode<>(null, null, null);
         sentinel.previous = sentinel.next = new DequeNode<>(item, sentinel, sentinel);
         size = 1;
+    }
+
+    /** Returns whether the parameter o is equal to the Deque.
+     *  o is considered equal if it is a Deque and if it contains the same contents. */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o instanceof LinkedListDeque<?>) {
+            LinkedListDeque<?> deque = (LinkedListDeque<?>) o;
+            if (deque.size() == this.size()) {
+                return equalsHelper(this, deque);
+            }
+        }
+        return false;
+    }
+
+    /** Returns the hash code value for the Deque. */
+    @Override
+    public int hashCode() {
+        int hashCode = 1;
+
+        DequeNode<Item> d = sentinel.next;
+        while (d != sentinel) {
+            hashCode = 31 * hashCode + Objects.hashCode(d.item);
+            d = d.next;
+        }
+
+        return hashCode;
     }
 
     /** Add the item into the front of Deque. */
@@ -138,4 +170,25 @@ public class LinkedListDeque<Item> implements Deque<Item> {
         }
         System.out.println();
      }
+
+     public static void main(String[] args) {
+        LinkedListDeque<String> lld1 = new LinkedListDeque<>();
+        LinkedListDeque<String> lld2 = new LinkedListDeque<>();
+
+        String s1 = new String("a");
+        String s2 = new String("a");
+
+        if (s1.equals(s2)) {
+            System.out.println("equals");
+        }
+
+        lld1.addLast(s1);
+        lld2.addLast(s2);
+
+        if (lld2.equals(lld1)) {
+            System.out.println("equals");
+        } else {
+            System.out.println("not equals");
+        }
+    }
 }

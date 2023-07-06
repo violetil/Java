@@ -1,5 +1,8 @@
 package deque;
 
+import java.util.Arrays;
+import java.util.Objects;
+
 public class ArrayDeque<Item> implements Deque<Item> {
     private Item[] items;
     private int first;
@@ -20,6 +23,31 @@ public class ArrayDeque<Item> implements Deque<Item> {
         size = 0;
 
         addFirst(item);
+    }
+
+    /** Returns whether the parameter o is equal to the Deque.
+     *  o is considered equal if it is a Deque and if it contains the same contents. */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o instanceof ArrayDeque<?>) {
+            ArrayDeque<?> deque = (ArrayDeque<?>) o;
+            if (deque.size() == this.size()) {
+                return equalsHelper(this, deque);
+            }
+        }
+        return false;
+    }
+
+    /** Returns the hash code value for the ArrayDeque. */
+    @Override
+    public int hashCode() {
+        int hashCode = Objects.hash(size);
+        hashCode = 31 * hashCode + Arrays.hashCode(items);
+
+        return hashCode;
     }
 
     /** Return the point forward one bit. */

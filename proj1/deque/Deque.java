@@ -1,5 +1,7 @@
 package deque;
 
+import java.util.Objects;
+
 public interface Deque<Item> {
     /** Add the item into front of deque. */
     public void addFirst(Item item);
@@ -31,10 +33,13 @@ public interface Deque<Item> {
         System.out.println();
     }
 
-    public static void main(String[] args) {
-        LinkedListDeque lld = new LinkedListDeque();
-        lld.addLast(3);
-        lld.addLast("sf");
-        lld.printDeque();
+    /** Return true if a and b have the same content, otherwise return false. */
+    default boolean equalsHelper(Deque<?> a, Deque<?> b) {
+        for (int i = 0; i < a.size(); i++) {
+            if (!Objects.equals(a.get(i), b.get(i))) {
+                return false;
+            }
+        }
+        return true;
     }
 }
