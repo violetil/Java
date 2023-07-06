@@ -24,5 +24,17 @@ public interface Deque<Item> {
 
     /** Prints the items in the deque from first to last, separated by space.
      *  Once all items have been printed, prints out a new line. */
-    public void printDeque();
+    public default void printDeque() {
+        for (int i = 0; i < size(); i++) {
+            System.out.print(get(i) + " ");
+        }
+        System.out.println();
+    }
+
+    public static void main(String[] args) {
+        LinkedListDeque lld = new LinkedListDeque();
+        lld.addLast(3);
+        lld.addLast("sf");
+        lld.printDeque();
+    }
 }

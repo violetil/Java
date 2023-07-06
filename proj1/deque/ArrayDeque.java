@@ -136,20 +136,4 @@ public class ArrayDeque<Item> implements Deque<Item> {
         int realIndex = (index + first) % items.length;
         return items[realIndex];
     }
-
-    /** Prints the items in the deque from first to last, separated by space.
-     *  Once all items have been printed, prints out a new line. */
-    @Override
-    public void printDeque() {
-        if (isEmpty()) {
-            return;
-        }
-
-        int index = first;
-        for (int i = 0; i < size; i++) {
-            System.out.print(items[index] + " ");
-            index = forwardPoint(index);
-        }
-        System.out.println();
-    }
 }
