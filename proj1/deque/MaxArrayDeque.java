@@ -2,6 +2,9 @@ package deque;
 
 import java.util.Comparator;
 
+/** MaxArrayDeque usage like the high order function,
+ *  pass the different parameter can implement different result.
+ */
 public class MaxArrayDeque<T> extends ArrayDeque<T> {
     private Comparator<T> comparator;
 
