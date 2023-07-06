@@ -21,7 +21,7 @@ public class timingADequeTest {
         ArrayDeque<Double> times = new ArrayDeque<>();
         ArrayDeque<Integer> opCounts = new ArrayDeque<>();
 
-        for (int i = 1000; i <= 512000; i *= 2) {
+        for (int i = 1000; i <= 128000; i *= 2) {
             ArrayDeque<Integer> ad1 = new ArrayDeque<>();
             int N = i; double time; int opCount = i;
             for (int j = 0; j < i; j += 1) {

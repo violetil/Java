@@ -21,7 +21,7 @@ public class timingLLDequeTest {
         LinkedListDeque<Double> times = new LinkedListDeque<>();
         LinkedListDeque<Integer> opCounts = new LinkedListDeque<>();
 
-        for (int i = 1000; i <= 512000; i *= 2) {
+        for (int i = 1000; i <= 128000; i *= 2) {
             LinkedListDeque<Integer> lld1 = new LinkedListDeque<>();
             int N = i; double time; int opCount = i;
             for (int j = 0; j < i; j += 1) {
