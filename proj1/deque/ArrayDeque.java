@@ -25,6 +25,16 @@ public class ArrayDeque<Item> implements Deque<Item> {
         addFirst(item);
     }
 
+    /** Return true if a and b have the same content, otherwise return false. */
+    private boolean equalsHelper(ArrayDeque<?> a, ArrayDeque<?> b) {
+        for (int i = 0; i < a.size(); i++) {
+            if (!Objects.equals(a.get(i), b.get(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     /** Returns whether the parameter o is equal to the Deque.
      *  o is considered equal if it is a Deque and if it contains the same contents. */
     @Override
@@ -140,12 +150,6 @@ public class ArrayDeque<Item> implements Deque<Item> {
             resize(size);
         }
         return tmp;
-    }
-
-    /** Return true if the array deque is empty, otherwise false. */
-    @Override
-    public boolean isEmpty() {
-        return this.size == 0;
     }
 
     /** Returns the number of items in the array deque. */

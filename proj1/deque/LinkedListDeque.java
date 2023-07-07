@@ -35,6 +35,16 @@ public class LinkedListDeque<Item> implements Deque<Item> {
         size = 1;
     }
 
+    /** Return true if a and b have the same content, otherwise return false. */
+    private boolean equalsHelper(LinkedListDeque<?> a, LinkedListDeque<?> b) {
+        for (int i = 0; i < a.size(); i++) {
+            if (!Objects.equals(a.get(i), b.get(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     /** Returns whether the parameter o is equal to the Deque.
      *  o is considered equal if it is a Deque and if it contains the same contents. */
     @Override
@@ -79,12 +89,6 @@ public class LinkedListDeque<Item> implements Deque<Item> {
         sentinel.previous = new DequeNode<>(item, sentinel.previous, sentinel);
         sentinel.previous.previous.next = sentinel.previous;
         size += 1;
-    }
-
-    /** Return true if Deque is empty, false otherwise. */
-    @Override
-    public boolean isEmpty() {
-        return size == 0;
     }
 
     /** Return the number of items in the deque. */
@@ -170,25 +174,4 @@ public class LinkedListDeque<Item> implements Deque<Item> {
         }
         System.out.println();
      }
-
-     public static void main(String[] args) {
-        LinkedListDeque<String> lld1 = new LinkedListDeque<>();
-        LinkedListDeque<String> lld2 = new LinkedListDeque<>();
-
-        String s1 = new String("a");
-        String s2 = new String("a");
-
-        if (s1.equals(s2)) {
-            System.out.println("equals");
-        }
-
-        lld1.addLast(s1);
-        lld2.addLast(s2);
-
-        if (lld2.equals(lld1)) {
-            System.out.println("equals");
-        } else {
-            System.out.println("not equals");
-        }
-    }
 }
