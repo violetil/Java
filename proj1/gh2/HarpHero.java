@@ -6,7 +6,7 @@ import edu.princeton.cs.algs4.StdDraw;
 /**
  * A client that uses the synthesizer package to replicate a plucked guitar string sound
  */
-public class GuitarHero {
+public class HarpHero {
     public static final double CONCERT = 440.0;
     public static final int NOTES = 37;
 
@@ -19,12 +19,12 @@ public class GuitarHero {
     public static void main(String[] args) {
         String keyboard = "q2we4r5ty7u8i9op-[=zxdcfvgbnjmk,.;/' ";
         double[] arrFrequency = new double[NOTES];
-        GuitarString[] strings = new GuitarString[NOTES];
+        HarpString[] strings = new HarpString[NOTES];
 
         fillFrequency(arrFrequency);
 
         for (int i = 0; i < NOTES; i++) {
-            strings[i] = new GuitarString(arrFrequency[i]);
+            strings[i] = new HarpString(arrFrequency[i]);
         }
 
         while (true) {
