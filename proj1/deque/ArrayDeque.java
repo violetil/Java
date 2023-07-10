@@ -205,20 +205,20 @@ public class ArrayDeque<Item> implements Deque<Item>{
         return "{" + String.join(", ", listOfString) + "}";
     }
 
-    public static void main(String[] args) {
-        ArrayDeque<Integer> ad = new ArrayDeque();
+    public static <T> ArrayDeque<T> of(T... stuff) {
+        ArrayDeque<T> returnDeque = new ArrayDeque<>();
+        for (T x : stuff) {
+            returnDeque.addLast(x);
+        }
+        return returnDeque;
+    }
 
-        ad.addLast(25);
-        ad.addLast(58);
-        ad.addLast(89);
+    public static void main(String[] args) {
+        ArrayDeque<String> ad = ArrayDeque.of("Beijing", "Tokyo", "NewYork");
 
         System.out.println(ad);
 
-        ArrayDeque<Integer> ad1 = new ArrayDeque();
-
-        ad1.addLast(25);
-        ad1.addLast(58);
-        ad1.addLast(89);
+        ArrayDeque<String> ad1 = ArrayDeque.of("Beijing", "Tokyo", "NewYork");
 
         System.out.println(ad.equals(ad1));
     }

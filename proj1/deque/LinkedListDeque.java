@@ -212,20 +212,20 @@ public class LinkedListDeque<Item> implements Deque<Item> {
          return false;
      }
 
-    public static void main(String[] args) {
-        LinkedListDeque<Integer> lld = new LinkedListDeque<>();
+     public static <T> LinkedListDeque<T> of(T... stuff) {
+         LinkedListDeque<T> returnDeque = new LinkedListDeque<>();
+         for (T x : stuff) {
+             returnDeque.addLast(x);
+         }
+         return returnDeque;
+     }
 
-        lld.addLast(25);
-        lld.addLast(58);
-        lld.addLast(89);
+    public static void main(String[] args) {
+        LinkedListDeque<Integer> lld = LinkedListDeque.of(25, 58, 89);
 
         System.out.println(lld);
 
-        LinkedListDeque<Integer> lld2 = new LinkedListDeque<>();
-
-        lld2.addLast(25);
-        lld2.addLast(58);
-        lld2.addLast(89);
+        LinkedListDeque<Integer> lld2 = LinkedListDeque.of(25, 58, 89);
 
         System.out.println(lld.equals(lld2));
     }
