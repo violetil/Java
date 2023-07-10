@@ -1,8 +1,6 @@
 package deque;
 
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.Objects;
+import java.util.*;
 
 public class ArrayDeque<Item> implements Deque<Item>{
     private Item[] items;
@@ -200,15 +198,11 @@ public class ArrayDeque<Item> implements Deque<Item>{
     }
 
     public String toString() {
-        StringBuilder returnSB= new StringBuilder("{");
-        int i;
-        for (i = 0; i < size - 1; i += 1) {
-            returnSB.append(items[i]);
-            returnSB.append(", ");
+        List<String> listOfString = new ArrayList<>();
+        for (Item i : this) {
+            listOfString.add(i.toString());
         }
-        returnSB.append(items[i]);
-        returnSB.append("}");
-        return returnSB.toString();
+        return "{" + String.join(", ", listOfString) + "}";
     }
 
     public static void main(String[] args) {
@@ -217,6 +211,8 @@ public class ArrayDeque<Item> implements Deque<Item>{
         ad.addLast(25);
         ad.addLast(58);
         ad.addLast(89);
+
+        System.out.println(ad);
 
         ArrayDeque<Integer> ad1 = new ArrayDeque();
 

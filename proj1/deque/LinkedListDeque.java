@@ -1,6 +1,8 @@
 package deque;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Objects;
 
 public class LinkedListDeque<Item> implements Deque<Item> {
@@ -174,16 +176,11 @@ public class LinkedListDeque<Item> implements Deque<Item> {
 
      @Override
      public String toString() {
-         StringBuilder returnSB = new StringBuilder("{");
-         DequeNode<Item> p = sentinel.next;
-         for (int i = 0; i < size - 1; i++) {
-             returnSB.append(p.item);
-             returnSB.append(", ");
-             p = p.next;
+         List<String> listOfString = new ArrayList<>();
+         for (Item i : this) {
+             listOfString.add(i.toString());
          }
-         returnSB.append(p.item);
-         returnSB.append("}");
-         return returnSB.toString();
+         return "{" + String.join(", ", listOfString) + "}";
      }
 
     /** Returns whether the parameter o is equal to the Deque.
@@ -221,6 +218,8 @@ public class LinkedListDeque<Item> implements Deque<Item> {
         lld.addLast(25);
         lld.addLast(58);
         lld.addLast(89);
+
+        System.out.println(lld);
 
         LinkedListDeque<Integer> lld2 = new LinkedListDeque<>();
 
