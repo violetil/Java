@@ -2,7 +2,7 @@ package deque;
 
 import java.util.Objects;
 
-public interface Deque<Item> {
+public interface Deque<Item> extends Iterable<Item> {
     /** Add the item into front of deque. */
     void addFirst(Item item);
 

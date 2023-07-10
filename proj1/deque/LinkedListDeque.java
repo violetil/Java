@@ -1,5 +1,6 @@
 package deque;
 
+import java.util.Iterator;
 import java.util.Objects;
 
 public class LinkedListDeque<Item> implements Deque<Item> {
@@ -43,36 +44,6 @@ public class LinkedListDeque<Item> implements Deque<Item> {
             }
         }
         return true;
-    }
-
-    /** Returns whether the parameter o is equal to the Deque.
-     *  o is considered equal if it is a Deque and if it contains the same contents. */
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o instanceof LinkedListDeque<?>) {
-            LinkedListDeque<?> deque = (LinkedListDeque<?>) o;
-            if (deque.size() == this.size()) {
-                return equalsHelper(this, deque);
-            }
-        }
-        return false;
-    }
-
-    /** Returns the hash code value for the Deque. */
-    @Override
-    public int hashCode() {
-        int hashCode = 1;
-
-        DequeNode<Item> d = sentinel.next;
-        while (d != sentinel) {
-            hashCode = 31 * hashCode + Objects.hashCode(d.item);
-            d = d.next;
-        }
-
-        return hashCode;
     }
 
     /** Add the item into the front of Deque. */
@@ -174,4 +145,89 @@ public class LinkedListDeque<Item> implements Deque<Item> {
         }
         System.out.println();
      }
+
+     /** Returns an iterator. */
+     public Iterator<Item> iterator() {
+         return new LLIterator<>();
+     }
+
+     private class LLIterator<Item> implements Iterator<Item> {
+         int remainItems;
+         DequeNode<Item> curPos;
+
+         public LLIterator() {
+             remainItems = size;
+             curPos = (DequeNode<Item>) sentinel.next;
+         }
+
+         public boolean hasNext() {
+             return size != 0;
+         }
+
+         public Item next() {
+             Item tmp = curPos.item;
+             curPos = curPos.next;
+             size -= 1;
+             return tmp;
+         }
+     }
+
+     @Override
+     public String toString() {
+         StringBuilder returnSB = new StringBuilder("{");
+         DequeNode<Item> p = sentinel.next;
+         for (int i = 0; i < size - 1; i++) {
+             returnSB.append(p.item);
+             returnSB.append(", ");
+             p = p.next;
+         }
+         returnSB.append(p.item);
+         returnSB.append("}");
+         return returnSB.toString();
+     }
+
+    /** Returns whether the parameter o is equal to the Deque.
+     *  o is considered equal if it is a Deque and if it contains the same contents. */
+     @Override
+     public boolean equals(Object o) {
+         if (this == o) {
+             return true;
+         }
+         /* Check the type is LinkedListDeque. */
+         if (o instanceof LinkedListDeque lld) {
+             /* Returns false if the size is not the same. */
+             if (size != lld.size) {
+                 return false;
+             }
+             /* Check all elements if is the same. */
+             DequeNode<Item> thisItem = sentinel.next;
+             DequeNode<Item> oItem = lld.sentinel.next;
+             for (int i = 0; i < size; i += 1) {
+                 if (!(thisItem.item.equals(oItem.item))) {
+                     return false;
+                 }
+                 thisItem = thisItem.next; oItem = oItem.next;
+             }
+
+             return true;
+         }
+         /* Type is not is LinkedListDeque. */
+         return false;
+     }
+
+    public static void main(String[] args) {
+        LinkedListDeque<Integer> lld = new LinkedListDeque<>();
+
+        lld.addLast(25);
+        lld.addLast(58);
+        lld.addLast(89);
+
+        LinkedListDeque<Integer> lld2 = new LinkedListDeque<>();
+
+        lld2.addLast(25);
+        lld2.addLast(58);
+        lld2.addLast(89);
+
+        System.out.println(lld.equals(lld2));
+    }
 }

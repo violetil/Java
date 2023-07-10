@@ -1,9 +1,10 @@
 package deque;
 
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.Objects;
 
-public class ArrayDeque<Item> implements Deque<Item> {
+public class ArrayDeque<Item> implements Deque<Item>{
     private Item[] items;
     private int first;
     private int last;
@@ -42,22 +43,24 @@ public class ArrayDeque<Item> implements Deque<Item> {
         if (this == o) {
             return true;
         }
-        if (o instanceof ArrayDeque<?>) {
-            ArrayDeque<?> deque = (ArrayDeque<?>) o;
-            if (deque.size() == this.size()) {
-                return equalsHelper(this, deque);
+        /* Check the type is ArrayDeque. */
+        if (o instanceof ArrayDeque ad) {
+            /* Returns false if the size is not the same. */
+            if (size != ad.size) {
+                return false;
             }
+
+            /* Check all elements if is the same. */
+            for (int i = 0; i < size; i += 1) {
+                if (! (items[i].equals(ad.items[i]))) {
+                    return false;
+                }
+            }
+
+            return true;
         }
+        /* Type is not is LinkedListDeque. */
         return false;
-    }
-
-    /** Returns the hash code value for the ArrayDeque. */
-    @Override
-    public int hashCode() {
-        int hashCode = Objects.hash(size);
-        hashCode = 31 * hashCode + Arrays.hashCode(items);
-
-        return hashCode;
     }
 
     /** Return the point forward one bit. */
@@ -167,5 +170,60 @@ public class ArrayDeque<Item> implements Deque<Item> {
         }
         int realIndex = (index + first) % items.length;
         return items[realIndex];
+    }
+
+    /** Returns an iterator. */
+    public Iterator<Item> iterator() {
+        return new ADIterator<Item>();
+    }
+
+    private class ADIterator<Item> implements Iterator<Item> {
+        private int curPos;
+        private int restItems;
+
+        public ADIterator() {
+            curPos = first;
+            restItems = size;
+        }
+
+        public boolean hasNext() {
+            return restItems != 0;
+        }
+
+        public Item next() {
+            Item res = (Item) items[curPos];
+            curPos = forwardPoint(curPos);
+            restItems -= 1;
+            return res;
+        }
+
+    }
+
+    public String toString() {
+        StringBuilder returnSB= new StringBuilder("{");
+        int i;
+        for (i = 0; i < size - 1; i += 1) {
+            returnSB.append(items[i]);
+            returnSB.append(", ");
+        }
+        returnSB.append(items[i]);
+        returnSB.append("}");
+        return returnSB.toString();
+    }
+
+    public static void main(String[] args) {
+        ArrayDeque<Integer> ad = new ArrayDeque();
+
+        ad.addLast(25);
+        ad.addLast(58);
+        ad.addLast(89);
+
+        ArrayDeque<Integer> ad1 = new ArrayDeque();
+
+        ad1.addLast(25);
+        ad1.addLast(58);
+        ad1.addLast(89);
+
+        System.out.println(ad.equals(ad1));
     }
 }
