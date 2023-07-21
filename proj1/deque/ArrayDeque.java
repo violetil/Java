@@ -172,10 +172,10 @@ public class ArrayDeque<Item> implements Deque<Item>{
 
     /** Returns an iterator. */
     public Iterator<Item> iterator() {
-        return new ADIterator<Item>();
+        return new ADIterator();
     }
 
-    private class ADIterator<Item> implements Iterator<Item> {
+    private class ADIterator implements Iterator<Item> {
         private int curPos;
         private int restItems;
 

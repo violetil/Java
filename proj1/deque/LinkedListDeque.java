@@ -150,10 +150,10 @@ public class LinkedListDeque<Item> implements Deque<Item> {
 
      /** Returns an iterator. */
      public Iterator<Item> iterator() {
-         return new LLIterator<>();
+         return new LLIterator();
      }
 
-     private class LLIterator<Item> implements Iterator<Item> {
+     private class LLIterator implements Iterator<Item> {
          int remainItems;
          DequeNode<Item> curPos;
 
