@@ -1,26 +1,45 @@
 package gitlet;
 
-// TODO: any imports you need here
-
-import java.util.Date; // TODO: You'll likely use this in this class
+import java.time.Instant;
 
 /** Represents a gitlet commit object.
- *  TODO: It's a good idea to give a description here of what else this Class
- *  does at a high level.
  *
- *  @author TODO
+ *
+ *  @author Violet
  */
 public class Commit {
-    /**
-     * TODO: add instance variables here.
-     *
-     * List all instance variables of the Commit class here with a useful
-     * comment above them describing what that variable represents and how that
-     * variable is used. We've provided one example for `message`.
+    /** Hava message, pointer of parent Commit and timestamp filed.
+     *  Use the java.time.Instant to represent the UTC timestamp.
      */
 
     /** The message of this Commit. */
     private String message;
+    /** Timestamp of this Commit. */
+    private String timestamp;
+    /** Point to the parent Commit. */
+    private Commit parent;
 
-    /* TODO: fill in the rest of this class. */
+    /** Initialize metadata of Commit. */
+    public Commit(String message, Commit parent) {
+        this.message = message;
+        this.parent = parent;
+
+        // UTC timestamp without zone offset.
+        this.timestamp = Instant.now().toString();
+    }
+
+    /** Get the message of Commit. */
+    public String getMessage() {
+        return message;
+    }
+
+    /** Get the timestamp of Commit. */
+    public String getTimestamp() {
+        return timestamp;
+    }
+
+    /** Get the pointer of parent of Commit. */
+    public Commit getParent() {
+        return parent;
+    }
 }
