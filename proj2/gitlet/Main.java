@@ -1,6 +1,8 @@
 package gitlet;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Arrays;
 
 /** Driver class for Gitlet, a subset of the Git version-control system.
@@ -25,7 +27,7 @@ public class Main {
         switch(firstArg) {
             case "init":
                 validatesNumOperand("init", args, 1);
-                Repository.initHandle();
+                Repository.init();
                 break;
             case "add":
                 // TODO: handle the `add [filename]` command
