@@ -2,6 +2,7 @@ package bstmap;
 
 import edu.princeton.cs.algs4.BST;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -73,9 +74,8 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
     /** Associates the specified value with the specified key in this map. */
     @Override
     public void put(K key, V value) {
-        if (key != null) {
-            root = put(root, null, key, value);
-        }
+        if (key == null) throw new IllegalArgumentException("argument key in put() is null");
+        root = put(root, null, key, value);
     }
 
     private BSTNode put (BSTNode x, BSTNode parent, K key, V value) {
@@ -92,7 +92,12 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
      * If you don't implement this, throw an UnsupportedOperationException. */
     @Override
     public Set<K> keySet() {
-        throw new UnsupportedOperationException();
+        HashSet<K> s = new HashSet<>();
+        BSTMapIter iterator = new BSTMapIter();
+        while (iterator.hasNext()) {
+            s.add(iterator.next());
+        }
+        return s;
     }
 
     /** Removes the mapping for the specified key from this map if present.
@@ -100,7 +105,51 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
      * UnsupportedOperationException. */
     @Override
     public V remove(K key) {
-        throw new UnsupportedOperationException();
+        if (key == null) throw new IllegalArgumentException("call remove() with null key");
+
+        V res = get(key);
+        root = remove(root, key);
+        return res;
+    }
+
+    private BSTNode remove(BSTNode x, K key) {
+        if (x == null) return null;
+
+        int cmp = key.compareTo(x.key);
+        if (cmp < 0) x.left = remove(x.left, key);
+        else if (cmp > 0) x.right = remove(x.right, key);
+        else {
+            if (x.right == null) {
+                if (x.left != null) x.left.parent = x.parent;
+                return x.left;
+            }
+            if (x.left == null) {
+                if (x.right != null) x.right.parent = x.parent;
+                return x.right;
+            }
+            BSTNode t = x;
+
+            BSTNode min = findMin(x.right);
+            min.parent = x.parent;
+            x = min;
+
+            x.right = removeMin(t.right);
+            t.left.parent = x;
+            x.left = t.left;
+        }
+        x.size = size(x.left) + size(x.right) + 1;
+        return x;
+    }
+
+    private BSTNode removeMin(BSTNode x) {
+        if (x == null) return null;
+        if (x.left == null) {
+            if (x.right != null) x.right.parent = x.parent;
+            return x.right;
+        }
+        x.left = removeMin(x.left);
+        x.size = size(x.left) + size(x.right) + 1;
+        return x;
     }
 
     /** Removes the entry for the specified key only if it is currently mapped to
@@ -108,10 +157,14 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
      * throw an UnsupportedOperationException.*/
     @Override
     public V remove(K key, V value) {
-        throw new UnsupportedOperationException();
+        if (key == null) throw new IllegalArgumentException("call remove() with null key");
+
+        V res = get(key);
+        if (value.equals(res)) return remove(key);
+        else return null;
     }
 
-    /** Find the minimum from this node. */
+    /** Find the minimum from this node. Return null if this node is null. */
     private BSTNode findMin(BSTNode x) {
         if (x == null) return null;
         if (x.left == null) return x;
@@ -163,7 +216,7 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
         K key;
         /** Store the value of the key-value of this node in the BST. */
         V value;
-        /** Store the left and right node in the BST. */
+        /** Store the left, right and parent node in the BST. */
         BSTNode left, right, parent;
     }
 
