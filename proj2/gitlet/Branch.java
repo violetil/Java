@@ -7,6 +7,8 @@ package gitlet;
  *  @Author Violet
  */
 public class Branch {
+    /** HEAD pointer, represent current branch which is invariant. */
+    private static String HEAD;
     /** The name of branch which is unique. */
     private String name;
     /** Current commit in this branch. */
@@ -14,6 +16,9 @@ public class Branch {
 
     /** Initialize this branch. */
     public Branch(Commit cur, String name) {
+        if (HEAD == null) {
+            HEAD = name;
+        }
         this.curCommit = cur;
         this.name = name;
     }
