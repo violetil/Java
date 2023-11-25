@@ -1,5 +1,6 @@
 package gitlet;
 
+import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -16,12 +17,11 @@ public class Main {
      *  This is the entry point to gitlet. It takes in arguments from command
      *  line and based on command calls the corresponding methods in Repository.
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         if (args.length == 0) {
             System.out.println("Please enter a command.");
-            return;
+            System.exit(0);
         }
-
 
         String firstArg = args[0];
         switch(firstArg) {
@@ -30,13 +30,43 @@ public class Main {
                 Repository.init();
                 break;
             case "add":
-                // TODO: handle the `add [filename]` command
+                validatesNumOperand("add", args, 2);
+                Repository.add(args[1]);
                 break;
-            // TODO: FILL THE REST IN
             case "commit":
+                validatesNumOperand("commit", args, 2);
+                Repository.commit(args[1]);
+                break;
+            case "rm":
+                validatesNumOperand("rm", args, 2);
+                Repository.rm(args[1]);
+                break;
+            case "status":
+                validatesNumOperand("status", args, 1);
+                Repository.status();
+                break;
+            case "log":
+                validatesNumOperand("log", args, 1);
+                Repository.log();
+                break;
+            case "checkout":
+                if (args.length == 3) {
+                    Repository.checkout(args[2]);
+                } else if (args.length == 4) {
+                    Repository.checkout(args[1], args[3]);
+                } else if (args.length == 2) {
+                    Repository.checkout(0, args[1]);
+                } else {
+                    System.out.println("Incorrect operands.");
+                }
+                break;
+            case "branch":
+                validatesNumOperand("branch", args, 2);
+                Repository.branch(args[1]);
                 break;
             default:
                 System.out.println("No command with that name exists.");
+                System.exit(0);
         }
     }
 
