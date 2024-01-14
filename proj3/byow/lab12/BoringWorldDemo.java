@@ -4,6 +4,8 @@ import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
 
+import java.util.Random;
+
 /**
  *  Draws a world that is mostly empty except for a small region.
  */
@@ -26,11 +28,12 @@ public class BoringWorldDemo {
         }
 
         // fills in a block 14 tiles wide by 4 tiles tall
-        for (int x = 20; x < 35; x += 1) {
-            for (int y = 5; y < 10; y += 1) {
-                world[x][y] = Tileset.WALL;
-            }
-        }
+//        for (int x = 20; x < 35; x += 1) {
+//            for (int y = 5; y < 10; y += 1) {
+//                world[x][y] = Tileset.WALL;
+//            }
+//        }
+        world[1][0] = TETile.colorVariant(Tileset.FLOWER, 0, 0, 0, new Random());
 
         // draws the world to the screen
         ter.renderFrame(world);

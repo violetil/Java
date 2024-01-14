@@ -6,135 +6,240 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+/** A snapshot of current work directory and the basic entity of Gitlet. Store the
+ *  current work directory status and that it can help us to restore the directory
+ *  status whenever.
+ *
+ *  @author Violet
+ */
 public class Commit implements Serializable {
+    /* Unique SHA-1 ID for the commit have the specific content. */
     private String id;
+    /* The short description of the commit. */
     private String message;
-    private String timestamp;
-    private Commit firstParent;
-    private Commit secondParent;
+    /* Creation time of the commit. */
+    private LocalDateTime timestamp;
+    /* ID of first commit parent of this commit. */
+    private String firstParentID;
+    /* ID of second commit parent of this commit. */
+    private String secondParentID;
     private Map<String, Blob> fileMaps;
 
-    public Commit(String message, Commit firstParent) {
-        this(message, firstParent, null, null);
+    public Commit(String message, String firstParentID) {
+        this(message, firstParentID, null, null);
     }
 
     public Commit(Commit commit) {
-        this(commit.message, commit.firstParent, commit.secondParent, commit.fileMaps);
+        this(commit.getMessage(), commit.getFirstParentID(), commit.getSecondParentID(), commit.getFileMaps());
     }
 
-    public Commit(String message, Commit firstParent, Commit secondParent, Map<String, Blob> fileMaps) {
+    /** Construct method. Automatic generate sha-1 code for id according to specific content
+     *  of content.
+     *
+     * @param message
+     * @param firstParentID
+     * @param secondParentID
+     * @param fileMaps
+     */
+    public Commit(String message, String firstParentID, String secondParentID, Map<String, Blob> fileMaps) {
         this.id = null;
         this.message = message;
-        this.firstParent = firstParent;
-        this.secondParent = secondParent;
+        this.firstParentID = firstParentID;
+        this.secondParentID = secondParentID;
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
         if (message.equals("initial commit")) {
-            this.timestamp = LocalDateTime.of(1970, 1, 1, 0, 0, 0).format(formatter).toString();
+            /* All the initial commit have the same timestamp. */
+            this.timestamp = LocalDateTime.of(1970, 1, 1, 0, 0, 0);
         } else {
-            this.timestamp = LocalDateTime.now().format(formatter).toString();
+            /* Otherwise generate the current timestamp. */
+            this.timestamp = LocalDateTime.now();
         }
 
-        // deep copy
+        /* Save all files in fileMaps. */
         this.fileMaps = new HashMap<>();
         if (fileMaps != null) {
-            for (String tmp : fileMaps.keySet()) {
-                this.fileMaps.put(tmp, fileMaps.get(tmp));
+            for (String filename : fileMaps.keySet()) {
+                this.fileMaps.put(filename, fileMaps.get(filename));
             }
         }
 
         this.id = Utils.sha1(Utils.serialize(this));
     }
 
-    /** Return true if this commit have this file with specific content. */
-    public boolean ExistsFile(String name, Blob blob) {
-        if (fileMaps.get(name) == null) return false;
+    /** Return true if this file with this blob exists in the commit file maps
+     *  otherwise return false.
+     *
+     * @param filename
+     * @param blob
+     */
+    public boolean containFile(String filename, Blob blob) {
+        if (!containFile(filename)) return false;
 
-        return blob.GetId().equals(fileMaps.get(name).GetId());
+        return blob.getId().equals(fileMaps.get(filename).getId());
     }
 
-    public boolean ExistsFile(File file) {
-        return false;
+    /** Return true if this file exists in the commit file maps
+     *  otherwise return false.
+     *
+     * @param filename
+     */
+    public boolean containFile(String filename) {
+        return fileMaps.get(filename) != null;
     }
 
-    /** Return true if this commit have this file. */
-    public boolean ExistsFile(String name) {
-        return fileMaps.get(name) != null;
+    /** Update timestamp according to current time. */
+    public void updateTimestamp() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+        this.timestamp = LocalDateTime.now();
     }
 
-    public Set<String> GetFiles() {
-        return fileMaps.keySet();
+    /** Update the file references according to the staging area.
+     *
+     * @param stagingArea
+     */
+    public void updateFiles(StagingArea stagingArea) {
+        stagedFiles(stagingArea.getAddition());
+        removalFiles(stagingArea.getRemove());
     }
 
-    /** Return the file content as string if this file exists in this commit,
-     *  return false otherwise. */
-    public String GetContent(String fileName) {
-        if (!ExistsFile(fileName)) return null;
-
-        Blob blob = fileMaps.get(fileName);
-
-        return blob.GetContent();
+    /** Add staged files. */
+    private void stagedFiles(Map<String, Blob> stagedFiles) {
+        for (String filename : stagedFiles.keySet()) {
+            fileMaps.put(filename, stagedFiles.get(filename));
+        }
     }
 
-    public Blob GetBlob(String fileName) {
-        return fileMaps.get(fileName);
+    /** Add removal files. */
+    private void removalFiles(Map<String, Blob> removalFiles) {
+        for (String filename : removalFiles.keySet()) {
+            fileMaps.remove(filename);
+        }
     }
 
-    public void AddFile(String name, Blob blob) {
-        fileMaps.put(name, blob);
-    }
-
-    public void RemoveFile(String name, Blob blob) {
-        fileMaps.remove(name, blob);
-    }
-
-    public void RemoveFile(String name) {
-        fileMaps.remove(name);
-    }
-
-    public String GetId() {
-        return this.id;
-    }
-
-    public String GetMessage() {
-        return this.message;
-    }
-
-    public Commit GetFirParent() {
-        return this.firstParent;
-    }
-
-    public void SetFirParent(Commit firstParent) {
-        this.firstParent = firstParent;
-    }
-
-    public void SetMessage(String message) {
-        this.message = message;
-    }
-
-    public String UpdateId() {
-        this.id = CalculateHash();
-
-        return this.id;
-    }
-
-    private String CalculateHash() {
-        String originalId = this.id;
-
+    /** Recalculate and refresh the SHA-1 ID. */
+    public void refreshID() {
         this.id = null;
         String hash = Utils.sha1(Utils.serialize(this));
 
-        this.id = originalId;
-        return hash;
+        this.id = hash;
+    }
+
+    /** Return the file contents as string if this file exists in this commit
+     *  otherwise return null.
+     *
+     * @param filename
+     * @return Contents of the file.
+     */
+    public String getFileContent(String filename) {
+        if (!containFile(filename)) return null;
+        Blob blob = fileMaps.get(filename);
+        return blob.getContent();
+    }
+
+    /** Return the file blob if this file exists in this commit
+     *  otherwise return null.
+     *
+     * @param filename
+     * @return
+     */
+    public Blob getBLob(String filename) {
+        if (!containFile(filename)) return null;
+        return fileMaps.get(filename);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        Commit commit = (Commit) obj;
+        return id.equals(commit.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result;
+        return result;
     }
 
     @Override
     public String toString() {
-        String res = "===\n";
-        res += "commit " + this.id;
-        res += "\nDate: " + this.timestamp;
-        res += "\n" + message + "\n";
+        StringBuffer buffer = new StringBuffer("===\n");
+        buffer.append("commit ");
+        buffer.append(this.getId());
 
-        return res;
+        if (this.getSecondParentID() != null) {
+            buffer.append("\nMerge: ");
+            buffer.append(this.getFirstParentID().substring(0, 5) + " ");
+            buffer.append(this.getSecondParentID().substring(0, 5));
+        }
+
+        buffer.append("\nDate: ");
+        buffer.append(this.getTimestamp());
+
+        buffer.append("\n" + message + "\n");
+
+        return buffer.toString();
+    }
+
+    /*************************  Setter and getter methods   *******************************/
+    /** Return the Commit object of first parent if the first parent not null
+     *  otherwise return null.
+     */
+    public Commit getFirstParent() {
+        if (this.getFirstParentID() != null) {
+            return Utils.readObject(Utils.join(Repository.COMMITS, this.getFirstParentID()), Commit.class);
+        }
+        return null;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public String getTimestamp() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+        return timestamp.format(formatter).toString();
+    }
+
+    public void setTimestamp(LocalDateTime timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public String getFirstParentID() {
+        return firstParentID;
+    }
+
+    public void setFirstParentID(String firstParentID) {
+        this.firstParentID = firstParentID;
+    }
+
+    public String getSecondParentID() {
+        return secondParentID;
+    }
+
+    public void setSecondParentID(String secondParentID) {
+        this.secondParentID = secondParentID;
+    }
+
+    public Map<String, Blob> getFileMaps() {
+        return fileMaps;
+    }
+
+    public void setFileMaps(Map<String, Blob> fileMaps) {
+        this.fileMaps = fileMaps;
     }
 }

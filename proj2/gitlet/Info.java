@@ -3,58 +3,115 @@ package gitlet;
 import java.io.Serializable;
 import java.util.*;
 
+/** Information about branches and HEAD pointer, provide some useful methods for
+ *  change or get them.
+ *
+ * @author Violet
+ */
 public class Info implements Serializable {
-    public Commit HEAD;
+    /* The HEAD pointer which always point the current commit. */
+    private Commit HEAD;
+    /* Current branch. */
     private String currentBranch;
-    private Map<String, Commit> branches;
+    /* All existed branches. */
+    private Map<String, String> branches;
 
     public Info() {
         branches = new HashMap<>();
     }
 
-    public boolean ExistsBranch(String name) {
-        return branches.get(name) != null;
+    /** Create a new branch with a commit which it will point.
+     *
+     * @param name - branch name
+     * @param commit - branch point commit when it was created
+     */
+    public void createBranch(String name, Commit commit) {
+        branches.put(name, commit.getId());
     }
 
-    public void CreateBranch(String name, Commit commit) {
-        branches.put(name, commit);
+    /** Remove a branch with given name if it exists.
+     *
+     * @param name
+     */
+    public void removeBranch(String name) {
+        if (!containBranch(name)) return;
+        branches.remove(name);
     }
 
-    public String GetCurrentBranch() {
-        return currentBranch;
+    /** Make the current branch head point to this commit.
+     *
+     * @param commit
+     */
+    public void setCurrentBranchHeadCommit(Commit commit) {
+        setBranchHeadCommit(currentBranch, commit);
     }
 
-    public Commit GetLatestCommit(String branchName) {
-        for (String branch : branches.keySet()) {
-            if (branchName.equals(branch)) {
-                return branches.get(branch);
-            }
-        }
-
-        return null;
+    /** Make the specific branch head commit point to the commit.
+     *
+     * @param branchName
+     * @param commit
+     */
+    private void setBranchHeadCommit(String branchName, Commit commit) {
+        branches.put(branchName, commit.getId());
     }
 
-    public void SetHEAD(Commit commit) {
-        HEAD = commit;
+    /** Return if branch with that name exists return false otherwise.
+     *
+     * @param branch
+     */
+    public boolean containBranch(String branch) {
+        return branches.containsKey(branch);
     }
 
-    public void SetCurrentBranch(String name) {
-        currentBranch = name;
-    }
-
-    public void SetBranch(String name, Commit commit) {
-        branches.put(name, commit);
+    /** Return the head commit of branch, return null otherwise.
+     *
+     * @param branch
+     */
+    public Commit getCommit(String branch) {
+        if (!containBranch(branch)) return null;
+        String commitID = branches.get(branch);
+        return Utils.readObject(Utils.join(Repository.COMMITS, commitID), Commit.class);
     }
 
     @Override
     public String toString() {
-        String res = "=== Branches ===\n";
-        res += "*" + currentBranch + "\n";
+        StringBuffer buffer = new StringBuffer("=== Branches ===\n*");
+        buffer.append(this.getCurrentBranch() + "\n");
 
-        for (String key : branches.keySet()) {
-            if (!key.equals(currentBranch)) res += key + "\n";
+        List<String> keys = new ArrayList<>(branches.keySet());
+        Collections.sort(keys);
+
+        for (String branch : keys) {
+            if (!branch.equals(this.getCurrentBranch())) {
+                buffer.append(branch);
+                buffer.append("\n");
+            }
         }
+        return buffer.toString();
+    }
 
-        return res;
+    /****************************   Setter and getter methods   ****************************/
+    public Commit getHEAD() {
+        return HEAD;
+    }
+
+    public void setHEAD(Commit HEAD) {
+        this.HEAD = HEAD;
+    }
+
+    public String getCurrentBranch() {
+        return currentBranch;
+    }
+
+    public void setCurrentBranch(String currentBranch) {
+        this.currentBranch = currentBranch;
+    }
+
+    public Map<String, String> getBranches() {
+        return branches;
+    }
+
+    public void setBranches(Map<String, String> branches) {
+        this.branches = branches;
     }
 }

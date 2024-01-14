@@ -49,13 +49,25 @@ public class Main {
                 validatesNumOperand("log", args, 1);
                 Repository.log();
                 break;
+            case "global-log":
+                validatesNumOperand("global-log", args, 1);
+                Repository.global_log();
+                break;
+            case "find":
+                validatesNumOperand("find", args, 2);
+                Repository.find(args[1]);
+                break;
+            case "reset":
+                validatesNumOperand("reset", args, 2);
+                Repository.reset(args[1]);
+                break;
             case "checkout":
                 if (args.length == 3) {
-                    Repository.checkout(args[2]);
+                    Repository.checkoutHeadFile(args[2]);
                 } else if (args.length == 4) {
-                    Repository.checkout(args[1], args[3]);
+                    Repository.checkoutFile(args[1], args[3]);
                 } else if (args.length == 2) {
-                    Repository.checkout(0, args[1]);
+                    Repository.checkoutBranch(args[1]);
                 } else {
                     System.out.println("Incorrect operands.");
                 }
@@ -64,9 +76,17 @@ public class Main {
                 validatesNumOperand("branch", args, 2);
                 Repository.branch(args[1]);
                 break;
+            case "rm-branch":
+                validatesNumOperand("rm-branch", args, 2);
+                Repository.rm_branch(args[1]);
+                break;
+            case "merge":
+                validatesNumOperand("meger", args, 2);
+                Repository.merge(args[1]);
+                break;
             default:
                 System.out.println("No command with that name exists.");
-                System.exit(0);
+                break;
         }
     }
 
