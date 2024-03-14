@@ -3,11 +3,13 @@ package byow.Core;
 import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
 
+import java.util.ArrayDeque;
+import java.util.Queue;
+
 public class Engine {
-    TERenderer ter = new TERenderer();
-    /* Feel free to change the width and height. */
-    public static final int WIDTH = 80;
-    public static final int HEIGHT = 30;
+    static TERenderer ter = new TERenderer();
+    public static final int WIDTH = 105;
+    public static final int HEIGHT = 63;
 
     /**
      * Method used for exploring a fresh world. This method should handle all inputs,
@@ -22,7 +24,7 @@ public class Engine {
      * behave exactly as if the user typed these characters into the engine using
      * interactWithKeyboard.
      *
-     * Recall that strings ending in ":q" should cause the game to quite save. For example,
+     * Recall that strings ending in ":q" should cause the game to quite save.   For example,
      * if we do interactWithInputString("n123sss:q"), we expect the game to run the first
      * 7 commands (n123sss) and then quit and save. If we then do
      * interactWithInputString("l"), we should be back in the exact same state.
@@ -37,16 +39,78 @@ public class Engine {
      * @param input the input string to feed to your program
      * @return the 2D TETile[][] representing the state of the world
      */
-    public TETile[][] interactWithInputString(String input) {
-        // TODO: Fill out this method so that it run the engine using the input
-        // passed in as an argument, and return a 2D tile representation of the
-        // world that would have been drawn if the same inputs had been given
-        // to interactWithKeyboard().
-        //
-        // See proj3.byow.InputDemo for a demo of how you can make a nice clean interface
-        // that works for many different input types.
+    public static TETile[][] interactWithInputString(String input) {
+        TETile[][] finalWorldFrame = new TETile[WIDTH][HEIGHT];
 
-        TETile[][] finalWorldFrame = null;
+        // 1. Handle the input string format "N####S" (Get the seed)
+        int seed = Utils.getSeed(input);
+
+        // 2. Generate a 2D tile world using the seed
+        generateRandomWorld(finalWorldFrame, seed);
+
         return finalWorldFrame;
+    }
+
+    /**
+     * Generate a random world with an integer as the random seed.
+     *
+     * 1. Randomly generate a game object.
+     * 2. Randomly generate a position.
+     * 3. Add the object into the world in the position.
+     * 4. Add the object's doors into the queue.
+     * 5. Into the loop. (Pop the door as a position and redo the step 2, 3 and 4
+     *                      until the queue is empty)
+     *
+     * @param world
+     * @param seed
+     */
+    private static void generateRandomWorld(TETile[][] world, int seed) {
+        Queue<Door> q = new ArrayDeque<>(); // the doors queue.
+        GameRandom.setRandomSeed(seed); // Set the random seed.
+        FillGameWorld.fillBoardWithNothing(world);
+
+        // 1. Randomly generate a game object.
+        GameObject obj1 = GameRandom.randomGameObj();
+
+        // 2. Randomly generate a position.
+        Position p = GameRandom.randomGamePosition();
+
+        // 3. Add the object into the world in the position.
+        FillGameWorld.drawGameObjIntoWorld(world, obj1, p);
+
+        // 4. Add the object doors into the queue.
+        q.addAll(obj1.getDoors());
+
+        // 5. The loop.
+        while (!q.isEmpty()) {
+            Door door1 = q.poll();
+
+            boolean isSuccess = false; // success add object into world use this door
+
+            for (int i = 0; i < 10; i++) {
+                // Back to 2
+                GameObject obj2 = GameRandom.randomGameObj();
+                Door door2 = FillGameWorld.drawGameObjIntoWorldWithDoor(world, obj2, door1);
+
+                if (door2 != null) {
+                    isSuccess = true;
+                    q.addAll(obj2.getDoors());
+                    q.remove(door2);
+                    break;
+                }
+            }
+
+            if (!isSuccess) world[door1.getPosInWorld().getX()][door1.getPosInWorld().getY()] = GameObjects.WALL;
+            else isSuccess = false;
+        }
+    }
+
+    /** Test the interactWithInputString() method. */
+    public static void main(String[] args) {
+        ter.initialize(WIDTH, HEIGHT);
+
+        TETile[][] world = interactWithInputString("n71111584754s");
+
+        ter.renderFrame(world);
     }
 }
