@@ -7,16 +7,18 @@ public class RoomGenerator {
     private int roomNumbers;
     private ArrayList<Room> roomList;
 
-    private static final int MINROOMWIDTH = 4;
-    private static final int MAXROOMWIDTH = 10;
-    private static final int MINROOMHEIGHT = 4;
-    private static final int MAXROOMHEIGHT = 10;
-    private static final int MINXPOS = 5;
-    private static final int MAXXPOS = 75;
-    private static final int MINYPOS = 5;
-    private static final int MAXYPOS = 40;
+    private static final int MINROOMWIDTH = 6;
+    private static final int MAXROOMWIDTH = 12;
+    private static final int MINROOMHEIGHT = 6;
+    private static final int MAXROOMHEIGHT = 12;
+    private static final int MINXPOS = 7;
+    private int MAXXPOS; // world width - 5
+    private static final int MINYPOS = 7;
+    private int MAXYPOS; // world height - 5
 
-    public RoomGenerator() {
+    public RoomGenerator(int width, int height) {
+        MAXXPOS = width - 7;
+        MAXYPOS = height - 7;
         roomList = new ArrayList<>();
         roomNumbers = 0;
     }

@@ -30,7 +30,7 @@ public class WorldGenerator {
         this.width = width;
         this.height = height;
         world = new TETile[width][height];
-        roomGenerator = new RoomGenerator();
+        roomGenerator = new RoomGenerator(width, height);
         hallwayGenerator = new HallwayGenerator();
     }
 
@@ -45,7 +45,6 @@ public class WorldGenerator {
         for (Room r : rlists) {
             drawnRoom(r);
         }
-        // Room optimization.
 
         return world;
     }
@@ -64,7 +63,7 @@ public class WorldGenerator {
         int h = p.y + r.getHeight();
         for (int x = p.x; x < w; x++) {
             for (int y = p.y; y < h; y++) {
-                if (x == p.x || x == w-1 || y == p.y || y == h-1) {
+                if ((x == p.x || x == w-1 || y == p.y || y == h-1) && (world[x][y] == WALL || world[x][y] == SPACE)) {
                     world[x][y] = WALL;
                 } else world[x][y] = FLOOR;
             }
