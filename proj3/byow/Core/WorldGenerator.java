@@ -82,9 +82,9 @@ public class WorldGenerator {
         Position first = h.getStart();
         Position second = h.getEnd();
         // Which conner type? Find the degree of second for first point.
-        double y = second.y - first.y; System.out.println(y);
-        double x = second.x - first.x; System.out.println(x);
-        double d = Math.toDegrees(Math.atan2(y, x)); System.out.println(d);
+        double y = second.y - first.y;
+        double x = second.x - first.x;
+        double d = Math.toDegrees(Math.atan2(y, x));
         if (d > 0 && d < 90) drawConner(new Position(second.x, first.y), ConnerType.leftTop); // 0 < d < 90: leftTop conner
         else if (d > 90 && d < 180) drawConner(new Position(second.x, first.y), ConnerType.rightTop); // 90 < d < 180: rightTop conner
         else if (d > -180 && d < -90) drawConner(new Position(second.x, first.y), ConnerType.rightDown); // -180 < d < -90: rightDown conner
@@ -154,5 +154,17 @@ public class WorldGenerator {
         leftDown,
         rightTop,
         rightDown
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (int i = height-1; i >= 0; i--) {
+            for (int j = width-1; j >= 0; j--) {
+                sb.append(world[i][j].character());
+            }
+            sb.append("\n");
+        }
+        return sb.toString();
     }
 }

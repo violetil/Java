@@ -10,9 +10,9 @@ public class RoomGenerator {
     private ArrayList<Room> separateRoomLists;
 
     private static final int MINROOMWIDTH = 6;
-    private static final int MAXROOMWIDTH = 12;
+    private static final int MAXROOMWIDTH = 14;
     private static final int MINROOMHEIGHT = 6;
-    private static final int MAXROOMHEIGHT = 12;
+    private static final int MAXROOMHEIGHT = 14;
     private static final int MINXPOS = 7;
     private int MAXXPOS; // world width - 5
     private static final int MINYPOS = 7;
