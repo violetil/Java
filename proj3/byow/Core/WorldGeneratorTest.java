@@ -13,5 +13,6 @@ public class WorldGeneratorTest {
         ter.initialize(80, 45);
         TETile[][] world = worldGenerator.generateWorld(r.nextLong());
         ter.renderFrame(world);
+//        System.out.println(Math.toDegrees(Math.atan2(9.0, 23.0)));
     }
 }

@@ -8,4 +8,12 @@ public class Hallway {
         start = s;
         end = e;
     }
+
+    public Position getStart() {
+        return start;
+    }
+
+    public Position getEnd() {
+        return end;
+    }
 }
