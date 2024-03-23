@@ -34,17 +34,20 @@ public class WorldGenerator {
         hallwayGenerator = new HallwayGenerator();
     }
 
-    /** Generate and return the world tiles based on the seed. */
+    /** Call this function to generate and return the world tiles based on the seed. */
     public TETile[][] generateWorld(long seed) {
         random = new Random(seed);
         fillNothing();
 
         int rs = RandomUtils.uniform(random, MINROOMS, MAXROOMS);
         roomGenerator.roomsGenerate(random, rs);
-        ArrayList<Room> rlists = roomGenerator.getRoomList();
-        for (Room r : rlists) {
+        ArrayList<Room> rLists = roomGenerator.getRoomList();
+        for (Room r : rLists) {
             drawnRoom(r);
         }
+
+        // Connect rooms
+
 
         return world;
     }

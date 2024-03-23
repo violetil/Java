@@ -6,6 +6,8 @@ import java.util.Random;
 public class RoomGenerator {
     private int roomNumbers;
     private ArrayList<Room> roomList;
+    private int separateRoomNumbers;
+    private ArrayList<Room> separateRoomLists;
 
     private static final int MINROOMWIDTH = 6;
     private static final int MAXROOMWIDTH = 12;
@@ -20,7 +22,9 @@ public class RoomGenerator {
         MAXXPOS = width - 7;
         MAXYPOS = height - 7;
         roomList = new ArrayList<>();
+        separateRoomLists = new ArrayList<>();
         roomNumbers = 0;
+        separateRoomNumbers = 0;
     }
 
     /** Generate one rooms. */
@@ -31,7 +35,8 @@ public class RoomGenerator {
             int height = RandomUtils.uniform(random, MINROOMHEIGHT, MAXROOMHEIGHT); // height
             int x = RandomUtils.uniform(random, MINXPOS, MAXXPOS); // x pos
             int y = RandomUtils.uniform(random, MINYPOS, MAXYPOS); // y pos
-            Room room = new Room(width, height, new Position(x, y));
+            Position center = new Position(x, y);
+            Room room = new Room(width, height, center);
             roomList.add(room);
         }
     }

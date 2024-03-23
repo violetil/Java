@@ -26,4 +26,8 @@ public class Room {
     public int getHeight() {
         return height;
     }
+
+    public Position getCenter() {
+        return center;
+    }
 }
